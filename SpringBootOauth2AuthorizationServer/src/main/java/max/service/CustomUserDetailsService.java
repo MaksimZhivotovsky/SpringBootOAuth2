@@ -44,14 +44,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 throw  new UsernameNotFoundException("No User Found");
             }
 
-            String pass = ldapUser.getPassword();
-            String passEnecod = passwordEncoder.encode(ldapUser.getPassword());
-
             return new org.springframework.security.core.userdetails.User(
                     ldapUser.getEmail(),
-//                    ldapUser.getDescription(),
+                    ldapUser.getDescription(),
 //                    passwordEncoder.encode(ldapUser.getPassword()),
-                    ldapUser.getPassword(),
+//                    ldapUser.getPassword(),
                     true,
                     true,
                     true,
