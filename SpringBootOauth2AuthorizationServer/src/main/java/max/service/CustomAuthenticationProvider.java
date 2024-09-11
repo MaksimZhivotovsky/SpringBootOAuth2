@@ -37,8 +37,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String pass = passwordEncoder.encode(rawPassword);
 
         log.info("CustomAuthenticationProvider checkPassword start");
-        if(passwordEncoder.matches(rawPassword, user.getPassword())) {
+//        if(passwordEncoder.matches(rawPassword, user.getPassword())) {
 //        if(passwordEncoder.encode(rawPassword).equals(user.getPassword())) {
+        if(rawPassword.equals(user.getPassword())) {
             return new UsernamePasswordAuthenticationToken(user.getUsername(),
                     user.getPassword(),
                     user.getAuthorities());

@@ -50,8 +50,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             return new org.springframework.security.core.userdetails.User(
                     ldapUser.getEmail(),
 //                    ldapUser.getDescription(),
-                    passwordEncoder.encode(ldapUser.getPassword()),
-//                    ldapUser.getPassword(),
+//                    passwordEncoder.encode(ldapUser.getPassword()),
+                    ldapUser.getPassword(),
                     true,
                     true,
                     true,
