@@ -6,17 +6,25 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import max.config.WelcomeClient;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 public class WelcomeController {
 	
 	private final WelcomeClient welcomeClient;
-	
+
 	@GetMapping("/")
 	public String welcome() {
-		
-		String welcome = welcomeClient.getWelcome();			
+
+		String welcome = welcomeClient.getWelcome();
 		return "<h1>" +  welcome + "</h1>";
+	}
+
+	@GetMapping("/home")
+	public String home() {
+		LocalDateTime time = LocalDateTime.now();
+		return "<h1>" + "Welcome Home! - " + time + "</h1>";
 	}
 	
 }

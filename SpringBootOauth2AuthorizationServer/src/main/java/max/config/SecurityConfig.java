@@ -9,6 +9,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -47,25 +48,24 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 public class SecurityConfig {
 
+	@Value("${accessTokenTimeToLiveOfMinutes}")
+	private Integer accessTokenTimeToLiveOfMinutes;
+
 	@Bean
 	@Order(1)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
 		
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
-//		return http
-//				.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(withDefaults())
-//				.and()
-//				.exceptionHandling(e -> e
-//				.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
-//				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-//				.build();
-
 		return http
 				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-				.tokenEndpoint(tokenEndpoint -> tokenEndpoint
-						.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
-						.authenticationProvider(new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())))
+				.tokenEndpoint(
+						tokenEndpoint -> tokenEndpoint
+								.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
+								.authenticationProvider(
+										new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())
+								)
+				)
 				.oidc(withDefaults())
 				.and()
 				.exceptionHandling(e -> e
@@ -112,17 +112,17 @@ public class SecurityConfig {
 	
 	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
-//		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-		RegisteredClient registeredClient = RegisteredClient.withId("client")
+		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("client")
 				.clientSecret(passwordEncoder().encode("secret"))
 				.scope("message.read")
 				.scope("message.write")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-//				.redirectUri("http://localhost:9000/auth")
-				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth2")  // url для получения токена когда
-					//  проходит аутентификацию правильно
+				.redirectUri("http://localhost:9000/auth")
+				.redirectUri("http://127.0.0.1:8080/home")
+				.redirectUri("http://127.0.0.1:8080/login/oauth2/code/myoauth")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
@@ -139,7 +139,7 @@ public class SecurityConfig {
 	TokenSettings tokenSettings() {
 		return TokenSettings.builder()
 				.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-				.accessTokenTimeToLive(Duration.ofDays(1))
+				.accessTokenTimeToLive(Duration.ofMinutes(accessTokenTimeToLiveOfMinutes))
 				.build();
 	}
 
@@ -171,7 +171,11 @@ public class SecurityConfig {
 		KeyPair keyPair = generateRsaKey();
 		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
 		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-		return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
+		return new RSAKey
+				.Builder(publicKey)
+				.privateKey(privateKey)
+				.keyID(UUID.randomUUID().toString())
+				.build();
 	}
 
 	static KeyPair generateRsaKey() {

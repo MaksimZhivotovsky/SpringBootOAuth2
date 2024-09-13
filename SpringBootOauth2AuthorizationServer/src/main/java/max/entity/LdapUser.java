@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entry(objectClasses = {"inetOrgPerson", "organizationalPerson", "top"})
-public final class LdapUser implements UserDetails {
+public final class LdapUser {
 
     @Id
     private Name dn;
@@ -40,33 +40,4 @@ public final class LdapUser implements UserDetails {
     @Attribute(name = "userPassword")
     private String password;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return "";
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
 }

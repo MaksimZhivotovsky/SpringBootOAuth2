@@ -30,8 +30,10 @@ public final class JwtBearerGrantAuthenticationProvider implements Authenticatio
     private final OAuth2AuthorizationService authorizationService;
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
-    public JwtBearerGrantAuthenticationProvider(OAuth2AuthorizationService authorizationService,
-                                                OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+    public JwtBearerGrantAuthenticationProvider(
+            OAuth2AuthorizationService authorizationService,
+            OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator
+    ) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
         Assert.notNull(tokenGenerator, "tokenGenerator cannot be null");
         this.authorizationService = authorizationService;

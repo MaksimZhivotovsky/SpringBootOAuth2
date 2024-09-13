@@ -7,13 +7,11 @@ import max.entity.LdapUser;
 import max.entity.User;
 import max.repository.LdapUserRepository;
 import max.repository.UserRepository;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +44,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             return new org.springframework.security.core.userdetails.User(
                     ldapUser.getEmail(),
-                    ldapUser.getDescription(),
+                    ldapUser.getPassword(),
+//                    ldapUser.getDescription(),
 //                    passwordEncoder.encode(ldapUser.getPassword()),
 //                    ldapUser.getPassword(),
                     true,
@@ -58,18 +57,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
         } else {
-            User user = userRepository.findByEmail(email);
+            User user = userRepository.findByeMailAddress(email);
             if(user == null) {
-                throw  new UsernameNotFoundException("No User Found");
+                throw  new UsernameNotFoundException("Неверный email или пароль");
             }
             return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
+                    user.getEMailAddress(),
                     user.getPassword(),
-                    user.isEnabled(),
+                    user.getIsArchive(),
                     true,
                     true,
                     true,
-                    getAuthorities(List.of((user.getRole().trim().isEmpty()) ? "Admin" : user.getRole()))
+                    getAuthorities(List.of((user.getKeycloakId())))
             );
         }
 
