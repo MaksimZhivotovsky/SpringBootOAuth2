@@ -25,7 +25,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 					.anyRequest().authenticated())
 			.oauth2Login(oauth2Login -> {
-				oauth2Login.loginPage("/oauth2/authorization/myoauth2");
+//				oauth2Login.loginPage("/oauth2/authorization/myoauth2");
+				oauth2Login.loginPage("/oauth2/authorization/users-client-oidc");
 				oauth2Login.authorizationEndpoint().authorizationRequestResolver(resolver);})
 			.oauth2Client(withDefaults());
 		return http.build();

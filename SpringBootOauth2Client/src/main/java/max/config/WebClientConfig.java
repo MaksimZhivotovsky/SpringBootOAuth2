@@ -25,8 +25,8 @@ public class WebClientConfig {
 		ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
 	            new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
 
-	    //oauth2Client.setDefaultClientRegistrationId("myoauth2");
-	    oauth2Client.setDefaultOAuth2AuthorizedClient(true);
+	    oauth2Client.setDefaultClientRegistrationId("users-client-oidc");
+//	    oauth2Client.setDefaultOAuth2AuthorizedClient(true);
 		WebClient webClient = WebClient.builder()
 				.apply(oauth2Client.oauth2Configuration())
 				.build();

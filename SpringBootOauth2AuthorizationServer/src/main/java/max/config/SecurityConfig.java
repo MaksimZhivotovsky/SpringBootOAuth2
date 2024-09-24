@@ -12,7 +12,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,28 +53,39 @@ public class SecurityConfig {
 	@Value("${accessTokenTimeToLiveOfMinutes}")
 	private Integer accessTokenTimeToLiveOfMinutes;
 
+//	@Bean
+//	@Order(1)
+//	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
+//
+//		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+//
+//		return http
+//				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+//				.tokenEndpoint(
+//						tokenEndpoint -> tokenEndpoint
+//								.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
+//								.authenticationProvider(
+//										new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())
+//								)
+//				)
+//				.oidc(withDefaults())
+//				.and()
+//				.exceptionHandling(e -> e
+//						.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
+//				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+//				.build();
+//
+//	}
+
 	@Bean
-	@Order(1)
-	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
-		
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
-		return http
-				.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-				.tokenEndpoint(
-						tokenEndpoint -> tokenEndpoint
-								.accessTokenRequestConverter(new JwtBearerGrantAuthenticationConverter())
-								.authenticationProvider(
-										new JwtBearerGrantAuthenticationProvider(authorizationService(), tokenGenerator())
-								)
-				)
-				.oidc(withDefaults())
-				.and()
-				.exceptionHandling(e -> e
-						.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
-				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-				.build();
+		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());
 
+		return http.formLogin(Customizer.withDefaults()).build();
 	}
 
 	@Bean
@@ -114,7 +127,8 @@ public class SecurityConfig {
 	public RegisteredClientRepository registeredClientRepository() {
 		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("client")
-				.clientSecret(passwordEncoder().encode("secret"))
+//				.clientSecret(passwordEncoder().encode("secret"))
+				.clientSecret("{noop}secret")
 				.scope("message.read")
 				.scope("message.write")
 				.scope(OidcScopes.OPENID)
