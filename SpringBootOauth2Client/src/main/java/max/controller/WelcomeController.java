@@ -18,7 +18,7 @@ public class WelcomeController {
 	public String welcome() {
 
 		String welcome = welcomeClient.getWelcome();
-		return "<h1>" +  welcome + "</h1>";
+		return  welcome ;
 	}
 
 	@GetMapping("/home")

@@ -21,11 +21,12 @@ public class WebClientConfig {
 		return httpServiceProxyFactory(authorizedClientManager).createClient(WelcomeClient.class);
 	}
 
-	private HttpServiceProxyFactory httpServiceProxyFactory(OAuth2AuthorizedClientManager authorizedClientManager) {
+	private HttpServiceProxyFactory httpServiceProxyFactory(
+			OAuth2AuthorizedClientManager authorizedClientManager) {
 		ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
 	            new ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
 
-	    oauth2Client.setDefaultClientRegistrationId("users-client-oidc");
+	    oauth2Client.setDefaultClientRegistrationId("rt-sc-front");
 //	    oauth2Client.setDefaultOAuth2AuthorizedClient(true);
 		WebClient webClient = WebClient.builder()
 				.apply(oauth2Client.oauth2Configuration())
